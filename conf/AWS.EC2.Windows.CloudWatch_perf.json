@@ -1,0 +1,51 @@
+{
+    "IsEnabled": true,
+    "EngineConfiguration": {
+        "PollInterval": "00:00:30",
+        "Components": [
+            {
+                "Id": "PerformanceCounter",
+                "FullName": "AWS.EC2.Windows.CloudWatch.PerformanceCounterComponent.PerformanceCounterInputComponent,AWS.EC2.Windows.CloudWatch",
+                "Parameters": {
+                    "CategoryName": "Memory",
+                    "CounterName": "Available MBytes",
+                    "InstanceName": "",
+                    "MetricName": "Memory",
+                    "Unit": "Megabytes",
+                    "DimensionName": "InstanceId",
+                    "DimensionValue": "ChangeMe"
+                }
+            },
+            {
+                "Id": "PerformanceCounter2",
+                "FullName": "AWS.EC2.Windows.CloudWatch.PerformanceCounterComponent.PerformanceCounterInputComponent,AWS.EC2.Windows.CloudWatch",
+                "Parameters": {
+                    "CategoryName": "LogicalDisk",
+                    "CounterName": "% Free Space",
+                    "InstanceName": "_Total",
+                    "MetricName": "LogicalDisk",
+                    "Unit": "Percent",
+                    "DimensionName": "InstanceId",
+                    "DimensionValue": "ChangeMe"
+                }
+            },
+            {
+                "Id": "CloudWatch",
+                "FullName": "AWS.EC2.Windows.CloudWatch.CloudWatch.CloudWatchOutputComponent,AWS.EC2.Windows.CloudWatch",
+                "Parameters":
+                {
+                    "AccessKey": "",
+                    "SecretKey": "",
+                    "Region": "us-east-1",
+                    "NameSpace": "Windows/Default"
+                }
+            }
+        ],
+        "Flows": {
+            "Flows":
+            [
+                "PerformanceCounter,CloudWatch","PerformanceCounter2,CloudWatch"
+            ]
+        }
+    }
+}
