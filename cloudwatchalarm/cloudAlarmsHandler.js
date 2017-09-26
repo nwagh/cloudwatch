@@ -15,16 +15,38 @@ module.exports.createCloudwatchAlarm = (event, context, callback) => {
     Namespace: 'AWS/EC2',
     Period: 60,
     Statistic: 'Average',
-    Threshold: 70.0,
-    ActionsEnabled: false,
+    Threshold: 1.0,
+    ActionsEnabled: true,
     AlarmDescription: 'Alarm when server CPU exceeds 70%',
+    AlarmActions: [ 'arn:aws:sns:us-east-1:980457846850:EmailNotifier' ],
     Dimensions: [
       {
         Name: 'InstanceId',
         Value: event.InstanceId
       },
     ],
-    Unit: 'Seconds'
+    Unit: 'Percent'
+  };
+
+  var memoryAlarm = {
+    AlarmName: 'EC2 Instance Memory Utilization',
+    ComparisonOperator: 'GreaterThanThreshold',
+    EvaluationPeriods: 1,
+    MetricName: 'MemoryUtilization',
+    Namespace: 'System/Linux',
+    Period: 60,
+    Statistic: 'Average',
+    Threshold: 1.0,
+    ActionsEnabled: true,
+    AlarmDescription: 'Alarm when server Memory exceeds 70%',
+    AlarmActions: [ 'arn:aws:sns:us-east-1:980457846850:EmailNotifier' ],
+    Dimensions: [
+      {
+        Name: 'InstanceId',
+        Value: event.InstanceId
+      },
+    ],
+    Unit: 'Percent'
   };
 
   cw.putMetricAlarm(cpuAlarm, function(err, data) {
@@ -32,8 +54,15 @@ module.exports.createCloudwatchAlarm = (event, context, callback) => {
       message = "Error happened during creating metrics :" + err;
       console.log("Error", err);
     } else {
-      message = data;
-      console.log("Success", data);
+      cw.putMetricAlarm(memoryAlarm, function(err,data){
+        if(err){
+          message = "Error happened during creating metrics :" + err;
+          console.log("Error", err);
+        }else{
+          message = data;
+          console.log("Success", data);
+        }
+        });
     }
   });
 
